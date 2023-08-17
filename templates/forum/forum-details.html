@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Forum Details{% endblock %}
+{% block main %}
+    <a href="{% url 'favorite_forum' forum.pk %}"
+       class="favorites-link {% if forum.user_has_favorited %}favorited{% endif %}"></a>
+    <div class="favorite-counter">
+        <span id="favorite-count">{{ object.favorites_set.count }}</span> Favorites
+    </div>
+    <div>
+    {% if is_owner %}
+        <a href="{% url 'edit_forum' object.pk %}" class="edit-forum-link">Edit Forum</a>
+    {% endif %}
+    </div>
+    <h1>{{ object.title }}</h1>
+    <p>{{ object.description }}</p>
+    {% if object.image %}
+        <img src="{{ object.image.url }}" alt="{{ object.title }}" width="300">
+    {% else %}
+        <img src="{% static 'images/forum_default.png' %}" alt="{{ object.title }}" width="300">
+    {% endif %}
+
+    <h2>Comments</h2>
+    <ul class="comment-list">
+        {% for comment in forum.comment_set.all %}
+            <li class="comment-box">
+                <div class="comment-user">
+                    <strong>{{ comment.user.username }}:</strong>
+                    {{ comment.content }}
+                </div>
+                <div class="comment-interaction">
+                    <a href="{% url 'like_comment' comment.pk %}"
+                       class="comment-like-button {% if comment.user_has_liked %}liked{% endif %}">Like</a>
+                    <span class="like-count">{{ comment.upvotes.count }}</span>
+                </div>
+                {% if forloop.last == False %}
+                    <div class="comment-bridge"></div>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <button id="comment-button">Comment</button>
+    <button id="share-button">Share</button>
+
+    <div id="comment-form" class="comment-form" style="display: none;">
+        <form method="post" action="{% url 'add_comment' forum.pk %}">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <button type="submit">Submit Comment</button>
+            <button type="button" id="cancel-button">Cancel</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("comment-button").addEventListener("click", function () {
+            document.getElementById("comment-form").style.display = "block";
+        });
+
+        document.getElementById("cancel-button").addEventListener("click", function () {
+            document.getElementById("comment-form").style.display = "none";
+        });
+    </script>
+{% endblock %}

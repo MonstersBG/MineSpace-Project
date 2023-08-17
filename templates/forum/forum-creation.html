@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Create New Forum{% endblock %}
+{% block main %}
+    <div>
+        <h1>Create New Forum</h1>
+        <form method="post" class="registration-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Create Forum</button>
+        </form>
+    </div>
+{% endblock %}

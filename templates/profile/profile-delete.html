@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirm Delete Profile{% endblock %}
+{% block main %}
+    {% if is_owner %}
+        <div class="confirm-delete-card">
+            <div class="card-header">
+                <h1>Confirm Delete Profile</h1>
+            </div>
+            <div class="card-body">
+                <p>Are you sure you want to delete your profile?</p>
+                <form action="{% url 'profile_delete' user.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-button">Yes, Delete</button>
+                    <a href="{% url 'profile_details' user.pk %}" class="cancel-link">Cancel</a>
+                </form>
+            </div>
+            <div class="picture-space">
+                <img src="{% static 'images/crying_ghast.png' %}" alt="Custom Picture">
+            </div>
+        </div>
+    {% else %}
+        <p>You do not have permission to delete this profile. Please don't be mean I'm a newbie dev.</p>
+    {% endif %}
+{% endblock %}

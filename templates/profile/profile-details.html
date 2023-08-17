@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile Details{% endblock %}
+{% block main %}
+    <div class="profile-card">
+        <div class="profile-bg-image" style="background-image: url('{% static 'images/minecraft_background.jpg' %}')"></div>
+        <div class="profile-picture-container">
+            {% if object.profile_picture %}
+                <div class="profile-picture" style="background-image: url('{{ object.profile_picture }}')">
+                </div>
+            {% else %}
+                <div class="profile-picture default-picture" style="background-image: url('{% static 'images/default_photo.jpg' %}')">
+                </div>
+            {% endif %}
+        </div>
+        <div class="profile-info">
+            <h1>Profile Details</h1>
+            <p>Username: {{ object.username }}</p>
+            <p>First Name: {{ object.first_name }}</p>
+            <p>Last Name: {{ object.last_name }}</p>
+
+        </div>
+        <div class="profile-buttons">
+            {% if is_owner %}
+            <a href="{% url 'profile_delete' request.user.pk %}" class="delete-button">Delete</a>
+            <a href="{% url 'profile_edit' request.user.pk %}" class="edit-button">Edit</a>
+            {% endif %}
+            <button class="share-button">Share</button>
+        </div>
+    </div>
+{% endblock %}

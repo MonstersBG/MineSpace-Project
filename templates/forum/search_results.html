@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Search Results{% endblock %}
+{% block main %}
+    <h1>Search Results</h1>
+
+    <div class="search-results">
+        {% for forum in forums %}
+            <div class="search-result-card">
+                <h2>{{ forum.title }}</h2>
+                <p>{{ forum.description }}</p>
+                <a href="{% url 'details_forum' forum.pk %}">View Details</a>
+            </div>
+        {% empty %}
+            <p>No results found.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main %}
+    <div>
+        {% if is_owner %}
+            <form action="{% url 'profile_edit' user.pk %}" method="post" class="registration-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Save Changes</button>
+            </form>
+        {% else %}
+            <p>You do not have permission to edit this profile.</p>
+        {% endif %}
+    </div>
+{% endblock %}

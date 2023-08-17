@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Help Ticket{% endblock %}
+
+{% block main %}
+    <div>
+        <form action="{% url 'help' %}" method="post" class="registration-form">
+            {{ form.as_p }}
+            <button type="submit">Send Ticket</button>
+
+            {% csrf_token %}
+
+        </form>
+    </div>
+
+{% endblock %}
