@@ -2,63 +2,96 @@
 {% load static %}
 {% block title %}Forum Details{% endblock %}
 {% block main %}
-    <a href="{% url 'favorite_forum' forum.pk %}"
-       class="favorites-link {% if forum.user_has_favorited %}favorited{% endif %}"></a>
-    <div class="favorite-counter">
-        <span id="favorite-count">{{ object.favorites_set.count }}</span> Favorites
-    </div>
-    <div>
-    {% if is_owner %}
-        <a href="{% url 'edit_forum' object.pk %}" class="edit-forum-link">Edit Forum</a>
-    {% endif %}
-    </div>
-    <h1>{{ object.title }}</h1>
-    <p>{{ object.description }}</p>
-    {% if object.image %}
-        <img src="{{ object.image.url }}" alt="{{ object.title }}" width="300">
-    {% else %}
-        <img src="{% static 'images/forum_default.png' %}" alt="{{ object.title }}" width="300">
-    {% endif %}
-
-    <h2>Comments</h2>
-    <ul class="comment-list">
-        {% for comment in forum.comment_set.all %}
-            <li class="comment-box">
-                <div class="comment-user">
-                    <strong>{{ comment.user.username }}:</strong>
-                    {{ comment.content }}
-                </div>
-                <div class="comment-interaction">
-                    <a href="{% url 'like_comment' comment.pk %}"
-                       class="comment-like-button {% if comment.user_has_liked %}liked{% endif %}">Like</a>
-                    <span class="like-count">{{ comment.upvotes.count }}</span>
-                </div>
-                {% if forloop.last == False %}
-                    <div class="comment-bridge"></div>
+    <div class="forum-details-container">
+        <div class="forum-details-card">
+            <a href="{% url 'favorite_forum' forum.pk %}"
+               class="favorites-link {% if forum.user_has_favorited %}favorited{% endif %}"></a>
+            <div class="favorite-counter">
+                <span id="favorite-count">{{ forum.favorites_set.count }}</span> Favorites
+            </div>
+            <h1>{{ forum.title }}</h1>
+            <p>{{ forum.description }}</p>
+            <div class="forum-image">
+                {% if forum.image %}
+                    <img src="{{ forum.image }}" alt="{{ forum.title }}" width="300">
+                {% else %}
+                    <img src="{% static 'images/forum_default.png' %}" alt="{{ forum.title }}" width="300">
                 {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
-
-    <button id="comment-button">Comment</button>
-    <button id="share-button">Share</button>
-
-    <div id="comment-form" class="comment-form" style="display: none;">
-        <form method="post" action="{% url 'add_comment' forum.pk %}">
-            {% csrf_token %}
-            {{ comment_form.as_p }}
-            <button type="submit">Submit Comment</button>
-            <button type="button" id="cancel-button">Cancel</button>
-        </form>
+            </div>
+        </div>
     </div>
+
+    <div id="comments-section-container" class="comments-section-container">
+        <div class="comments-section">
+            <h2>Comments</h2>
+            <ul class="comment-list">
+                {% for comment in forum.comment_set.all %}
+                    <li class="comment-box">
+                        <div class="comment-content">
+                            <strong>{{ comment.user.username }}:</strong>
+                            {{ comment.content }}
+
+                        </div>
+                        <div class="comment-interaction">
+                            <a href="{% url 'like_comment' comment.pk %}"
+                               class="comment-like-button {% if comment.user_has_liked %}liked{% endif %}">Like</a>
+                            {% if comment.user == request.user %}
+                                <a href="{% url 'delete_comment' comment.pk %}" class="delete-comment-link">Delete</a>
+                            {% endif %}
+                            <span class="like-count">{{ comment.upvotes.count }}</span>
+                        </div>
+                    </li>
+                {% endfor %}
+
+            </ul>
+            <button id="comment-button">Comment</button>
+            <button id="share-button">Share</button>
+            <div id="comment-form" class="comment-form" style="display: none;">
+                <form method="post" action="{% url 'add_comment' forum.pk %}">
+                    {% csrf_token %}
+                    {{ comment_form.as_p }}
+                    <button type="submit">Submit Comment</button>
+                    <button type="button" id="cancel-button">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="expander"></div>
 
     <script>
         document.getElementById("comment-button").addEventListener("click", function () {
             document.getElementById("comment-form").style.display = "block";
+            expandCommentsSectionContainer();
         });
 
         document.getElementById("cancel-button").addEventListener("click", function () {
             document.getElementById("comment-form").style.display = "none";
         });
+
+        const totalCommentCount = {{ forum.comment_set.count }};
+
+        // Function to expand the comment section container
+        function expandCommentsSectionContainer() {
+            const commentsSectionContainer = document.getElementById("comments-section-container");
+            const originalHeight = commentsSectionContainer.clientHeight;
+
+            // Calculate new height based on the total number of comments
+            const totalCommentCount = {{ forum.comment_set.count }};
+            let newHeight = originalHeight + (totalCommentCount > 4 ? (totalCommentCount - 4) * 250 : 0);
+
+            // Limit expansion to a certain height if needed
+            newHeight = Math.min(newHeight, window.innerHeight * 0.6);
+
+            commentsSectionContainer.style.height = `${newHeight}px`;
+
+            // Smoothly scroll to the newly expanded section
+            commentsSectionContainer.scrollIntoView({behavior: 'smooth'});
+        }
+
+
+        // Run the function if the total comment count is greater than 4
+        if (totalCommentCount > 4) {
+            expandCommentsSectionContainer();
+        }
     </script>
 {% endblock %}

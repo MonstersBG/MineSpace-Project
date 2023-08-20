@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import home, create_forum, ForumDetailView, add_comment, like_comment, favorite_forum, edit_forum, \
-    search_forums
+    search_forums, delete_comment
 
 urlpatterns = [
     path("", home, name="home"),
@@ -11,5 +11,6 @@ urlpatterns = [
     path("like-comment/<int:pk>/", like_comment, name="like_comment"),
     path("forum/<int:pk>/edit", edit_forum, name="edit_forum"),
     path("search/", search_forums, name="search_forums"),
+    path('delete_comment/<int:pk>/', delete_comment, name='delete_comment'),
 
 ]

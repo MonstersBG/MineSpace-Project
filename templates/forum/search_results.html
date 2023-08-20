@@ -7,12 +7,21 @@
     <div class="search-results">
         {% for forum in forums %}
             <div class="search-result-card">
-                <h2>{{ forum.title }}</h2>
-                <p>{{ forum.description }}</p>
-                <a href="{% url 'details_forum' forum.pk %}">View Details</a>
+                <a href="{% url 'details_forum' forum.pk %}">
+                    <div class="forum-image">
+                        {% if forum.image %}
+                            <img src="{{ forum.image }}" alt="{{ forum.title }}">
+                        {% else %}
+                            <img src="{% static 'images/forum_default.png' %}" alt="{{ forum.title }}">
+                        {% endif %}
+                    </div>
+                    <h2>{{ forum.title }}</h2>
+                </a>
+                <a href="{% url 'details_forum' forum.pk %}" class="view-details-button">View Details</a>
             </div>
         {% empty %}
             <p>No results found.</p>
         {% endfor %}
     </div>
+    <div class="expander"></div>
 {% endblock %}
