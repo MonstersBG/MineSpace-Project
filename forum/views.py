@@ -126,44 +126,16 @@ def edit_forum(request, pk):
     return render(request, 'forum/forum_edit.html', context)
 
 
-# def search_forums(request):
-#     query = request.GET.get('q')
-#
-#     if query:
-#         forums = Forum.objects.filter(title__icontains=query)
-#     else:
-#         forums = Forum.objects.none()
-#
-#     context = {
-#         'forums': forums,
-#         'query': query,
-#     }
-#     return render(request, 'forum/search_results.html', context)
-
 def search_forums(request):
     query = request.GET.get('q')
 
     if query:
         forums = Forum.objects.filter(title__icontains=query)
     else:
-        forums = Forum.objects.order_by('title')
+        forums = Forum.objects.none()
 
     context = {
         'forums': forums,
         'query': query,
     }
     return render(request, 'forum/search_results.html', context)
-
-
-@login_required
-def delete_comment(request, pk):
-    comment = Comment.objects.get(pk=pk)
-    forum_id = comment.to_forum_id
-    if comment.user == request.user:
-        comment.delete()
-        return redirect('details_forum', pk=forum_id)
-    else:
-        context = {
-            'message': "You don't have permission to delete this comment."
-        }
-        return render(request, 'forum/permission_denied.html', context)

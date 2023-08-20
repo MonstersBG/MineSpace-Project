@@ -31,12 +31,12 @@
         <a href="{% url 'home' %}">Home</a>
     </div>
     <div class="navbar-center">
-    <form method="get" action="{% url 'search_forums' %}">
-        <input type="text" name="q" placeholder="Search forums">
-        <button type="submit">Search</button>
 
-    </form>
-</div>
+        <form method="get" action="{% url 'search_forums' %}">
+            <input type="text" name="q" placeholder="Search forums">
+            <button type="submit">Search</button>
+        </form>
+    </div>
     <div class="navbar-right">
         {% if not request.user.is_authenticated %}
             <a href="{% url 'login' %}">Login</a>
